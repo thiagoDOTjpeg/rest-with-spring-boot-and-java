@@ -3,6 +3,7 @@ package br.com.gritti.services;
 import java.util.List;
 import java.util.logging.Logger;
 
+import br.com.gritti.exceptions.RequiredObjectsIsNullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,10 @@ public class PersonServices {
 	}
 	
 	public PersonVO update(PersonVO person) {
+		if(person == null) {
+			throw new RequiredObjectsIsNullException();
+		}
+
 		logger.info("Updating one person!");
 		
 		var entity = repository.findById(person.getId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
@@ -56,12 +61,13 @@ public class PersonServices {
 	}
 	
 	public PersonVO create(PersonVO person) {
+		if(person == null) {
+			throw new RequiredObjectsIsNullException();
+		}
+
 		logger.info("Creating one person!");
-		
 		var entity = DozerMapper.parseObjetct(person, Person.class);
-		
 		var vo =  DozerMapper.parseObjetct(repository.save(entity), PersonVO.class);
-		
 		return vo;
 	}
 	
