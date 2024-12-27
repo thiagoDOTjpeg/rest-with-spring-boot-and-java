@@ -13,7 +13,7 @@ public class DozerMapper {
 	
 	private static Mapper mapper = DozerBeanMapperBuilder.buildDefault();
 	
-	public static <O, D> D parseObjetct(O origin, Class<D> destination) {
+	public static <O, D> D parseObject(O origin, Class<D> destination) {
 		return mapper.map(origin, destination);
 	} 
 	

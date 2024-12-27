@@ -3,7 +3,7 @@ spring:
   driver-class-name: com.mysql.cj.jdbc.Driver
   url: jdbc:mysql://localhost:3306/rest_with_spring_boot
   username: root
-  password: admin123
+  password: root123
  jpa:
   open-in-view: true
   hibernate:
@@ -17,3 +17,5 @@ springdoc:
   path: /api-docs
  swagger-ui:
   path: /swagger-ui.html
+  use-root-path: true
+ paths-to-match: /api/**
