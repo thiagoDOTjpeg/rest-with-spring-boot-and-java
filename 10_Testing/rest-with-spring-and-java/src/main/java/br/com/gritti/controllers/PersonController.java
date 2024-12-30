@@ -11,14 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import br.com.gritti.data.vo.v1.PersonVO;
 import br.com.gritti.data.vo.v2.PersonVOV2;
@@ -33,6 +26,7 @@ public class PersonController {
 	@Autowired
 	private PersonServices service;
 
+	@CrossOrigin(origins = "http://localhost:8080")
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Finds a Person", description = "Finds a Person", tags = {"People"},
 					responses = { @ApiResponse(description = "Success", responseCode = "200", content = {
@@ -65,7 +59,8 @@ public class PersonController {
 		
 		return service.findAll();
 	}
-	
+
+	@CrossOrigin(origins = {"http://localhost:8080", "https://gritti.com.br"})
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE , produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Add a new Person", description = "Adds a new Person by passing in a JSON", tags = {"People"},
 					responses = { @ApiResponse(description = "Success", responseCode = "200", content = {
