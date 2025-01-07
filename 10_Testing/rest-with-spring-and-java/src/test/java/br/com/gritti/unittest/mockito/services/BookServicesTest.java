@@ -20,7 +20,7 @@ import br.com.gritti.data.vo.v1.BookVO;
 import br.com.gritti.exceptions.RequiredObjectsIsNullException;
 import br.com.gritti.model.Book;
 import br.com.gritti.repositories.BookRepository;
-import br.com.gritti.services.BookService;
+import br.com.gritti.services.BookServices;
 import br.com.gritti.unittest.mapper.mocks.MockBook;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -30,7 +30,7 @@ class BookServicesTest {
   MockBook input;
 
   @InjectMocks
-  private BookService service;
+  private BookServices service;
 
   @Mock
   BookRepository repository;

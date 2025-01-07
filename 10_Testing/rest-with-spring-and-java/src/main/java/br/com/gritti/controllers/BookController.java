@@ -1,7 +1,7 @@
 package br.com.gritti.controllers;
 
 import br.com.gritti.data.vo.v1.BookVO;
-import br.com.gritti.services.BookService;
+import br.com.gritti.services.BookServices;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,11 +19,11 @@ import java.util.List;
 @RequestMapping("/api/book")
 @Tag(name = "Book", description = "Endpoints for Managing Books")
 public class BookController {
-  private final BookService bookService;
+  private final BookServices bookServices;
 
   @Autowired
-  public BookController(BookService bookService) {
-    this.bookService = bookService;
+  public BookController(BookServices bookServices) {
+    this.bookServices = bookServices;
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,7 +38,7 @@ public class BookController {
           @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
   })
   public List<BookVO> getAllBooks() {
-    return bookService.findAll();
+    return bookServices.findAll();
   }
 
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,7 +53,7 @@ public class BookController {
                   @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
           })
   public BookVO getBookById(@PathVariable(value = "id") Long id) {
-    return bookService.findById(id);
+    return bookServices.findById(id);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,7 +67,7 @@ public class BookController {
                   @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
           })
   public BookVO createBook(BookVO book) {
-    return bookService.create(book);
+    return bookServices.create(book);
   }
 
   @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,7 +82,7 @@ public class BookController {
                   @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
           })
   public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
-    bookService.delete(id);
+    bookServices.delete(id);
     return ResponseEntity.noContent().build();
   }
 }

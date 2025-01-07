@@ -1,9 +1,7 @@
 package br.com.gritti.services;
 
 import br.com.gritti.controllers.BookController;
-import br.com.gritti.controllers.PersonController;
 import br.com.gritti.data.vo.v1.BookVO;
-import br.com.gritti.data.vo.v1.PersonVO;
 import br.com.gritti.exceptions.RequiredObjectsIsNullException;
 import br.com.gritti.exceptions.ResourceNotFoundException;
 import br.com.gritti.mapper.DozerMapper;
@@ -19,13 +17,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Service
-public class BookService {
+public class BookServices {
   private Logger logger = Logger.getLogger(this.getClass().getName());
 
   private BookRepository repository;
 
   @Autowired
-  public BookService(BookRepository bookRepository) {
+  public BookServices(BookRepository bookRepository) {
     this.repository = bookRepository;
   }
 
