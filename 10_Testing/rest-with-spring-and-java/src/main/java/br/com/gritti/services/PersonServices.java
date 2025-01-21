@@ -1,11 +1,16 @@
 package br.com.gritti.services;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import br.com.gritti.controllers.PersonController;
 import br.com.gritti.exceptions.RequiredObjectsIsNullException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -29,21 +34,46 @@ public class PersonServices {
 	
 	@Autowired
 	PersonMapper mapper;
+
+	@Autowired
+	PagedResourcesAssembler<PersonVO> assembler;
 	
-	public List<PersonVO> findAll() {
+	public PagedModel<EntityModel<PersonVO>> findAll(Pageable pageable) {
 		
 		logger.info("Finding all people!");
 
-		var persons = DozerMapper.parseListObjects(repository.findAll(), PersonVO.class);
-		persons
-						.forEach(p -> {
-							try {
-								p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel());
-							} catch (Exception e) {
-								throw new RuntimeException(e);
-							}
-						});
-		return persons;
+		var personPage = repository.findAll(pageable);
+
+		var personVosPage = personPage.map(p -> DozerMapper.parseObject(p, PersonVO.class));
+		personVosPage.map(p -> {
+      try {
+        return p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel());
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    });
+
+		Link link = linkTo(methodOn(PersonController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+		return assembler.toModel(personVosPage, link);
+	}
+
+	public PagedModel<EntityModel<PersonVO>> findPersonByName(String firstName, Pageable pageable) {
+
+		logger.info("Finding all people!");
+
+		var personPage = repository.findPersonsByNames(firstName, pageable);
+
+		var personVosPage = personPage.map(p -> DozerMapper.parseObject(p, PersonVO.class));
+		personVosPage.map(p -> {
+      try {
+        return p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel());
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    });
+
+		Link link = linkTo(methodOn(PersonController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+		return assembler.toModel(personVosPage, link);
 	}
 	
 
@@ -95,6 +125,18 @@ public class PersonServices {
 		
 		var vo =  mapper.convertEntityToVo(repository.save(entity));
 		
+		return vo;
+	}
+
+	@Transactional
+	public PersonVO disablePerson(Long id) throws Exception {
+		logger.info("Disabling one person!");
+
+		repository.disablePerson(id);
+
+		var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+		var vo = DozerMapper.parseObject(entity, PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel());
 		return vo;
 	}
 	
